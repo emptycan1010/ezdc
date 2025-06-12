@@ -50,22 +50,66 @@ document.addEventListener('keydown', function(event) {
       url.searchParams.delete('no');
       url.searchParams.delete('page');
       window.location.href = url.toString();
-    }
-  } else if (event.key === 's') {
-    // S키: page 값 1씩 증가
-    const currentPage = parseInt(url.searchParams.get('page')) || 1;
-    url.searchParams.set('page', currentPage + 1);
-    window.location.href = url.toString();  } else if (event.key === 'a') {
-    // A키: page 값 1씩 감소 (2 이상일 때만)
-    const currentPage = parseInt(url.searchParams.get('page')) || 1;
-    if (currentPage > 1) {
-      if (currentPage === 2) {
-        url.searchParams.delete('page');
-      } else {
-        url.searchParams.set('page', currentPage - 1);
+    }  } else if (event.key === 's') {
+    // S키: view 페이지에서는 lists로 이동하면서 exception_mode 유지하고 page=2, lists 페이지에서는 page 값 1씩 증가
+    const idParam = url.searchParams.get('id');
+    const exceptionMode = url.searchParams.get('exception_mode');
+    
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+      // view 페이지에서 lists 페이지로 이동하면서 page=2 설정
+      let baseUrl = '';
+      if (url.pathname.includes('/mini/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}&page=2`;
+      } else if (url.pathname.includes('/mgallery/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}&page=2`;
+      } else if (url.pathname.includes('/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/board/lists/?id=${idParam}&page=2`;
       }
+      
+      if (baseUrl && exceptionMode) {
+        window.location.href = `${baseUrl}&exception_mode=${exceptionMode}`;
+      } else if (baseUrl) {
+        window.location.href = baseUrl;
+      }
+    } else {
+      // lists 페이지에서는 기존 로직
+      const currentPage = parseInt(url.searchParams.get('page')) || 1;
+      url.searchParams.set('page', currentPage + 1);
       window.location.href = url.toString();
-    }  } else if (event.key === 'f') {
+    }
+  } else if (event.key === 'a') {
+    // A키: view 페이지에서는 lists로 이동하면서 exception_mode 유지, lists 페이지에서는 page 값 1씩 감소
+    const idParam = url.searchParams.get('id');
+    const exceptionMode = url.searchParams.get('exception_mode');
+    
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+      // view 페이지에서 lists 페이지로 이동
+      let baseUrl = '';
+      if (url.pathname.includes('/mini/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}`;
+      } else if (url.pathname.includes('/mgallery/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}`;
+      } else if (url.pathname.includes('/board/view/')) {
+        baseUrl = `https://gall.dcinside.com/board/lists/?id=${idParam}`;
+      }
+      
+      if (baseUrl && exceptionMode) {
+        window.location.href = `${baseUrl}&exception_mode=${exceptionMode}`;
+      } else if (baseUrl) {
+        window.location.href = baseUrl;
+      }
+    } else {
+      // lists 페이지에서는 기존 로직
+      const currentPage = parseInt(url.searchParams.get('page')) || 1;
+      if (currentPage > 1) {
+        if (currentPage === 2) {
+          url.searchParams.delete('page');
+        } else {
+          url.searchParams.set('page', currentPage - 1);
+        }
+        window.location.href = url.toString();
+      }
+    }} else if (event.key === 'f') {
     // F키: 특정 조건에서 id를 제외한 모든 URL 파라미터 삭제 또는 특별한 이동
     const exceptionMode = url.searchParams.get('exception_mode');
     const currentPage = parseInt(url.searchParams.get('page')) || 1;

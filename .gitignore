@@ -136,3 +136,5 @@ dist
 .pnp.*
 dist.pem
 dist.crx
+dist.zip
+dist.zip
