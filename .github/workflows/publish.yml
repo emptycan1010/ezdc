@@ -19,7 +19,10 @@ jobs:
 
       - name: Build zip file
         run: npm run build
-
+        
+      - name: Create ZIP file
+        run: zip -r release.zip ./dist # 빌드된 파일이 있는 디렉토리를 압축
+        
       - name: Upload to Chrome Web Store
         uses: mobilefirstllc/cws-publish@latest
         with:
