@@ -18,9 +18,25 @@ document.addEventListener('keydown', function(event) {
     }
   } else if (event.key === 'r') {
     // R키: 새로고침
-    window.location.reload();
-  } else if (event.key === 'g') {
-    // G키: 특정 URL에서 exception_mode=recommend 추가
+    window.location.reload();  } else if (event.key === 'g') {
+    // G키: view 페이지에서 해당하는 lists 페이지로 이동하거나 lists 페이지에서 exception_mode=recommend 추가
+    const idParam = url.searchParams.get('id');
+    
+    // view 페이지에서 해당하는 lists 페이지로 이동
+    if (url.hostname === 'gall.dcinside.com' && idParam) {
+      if (url.pathname.includes('/mini/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}&exception_mode=recommend`;
+        return;
+      } else if (url.pathname.includes('/mgallery/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}&exception_mode=recommend`;
+        return;
+      } else if (url.pathname.includes('/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/board/lists/?id=${idParam}&exception_mode=recommend`;
+        return;
+      }
+    }
+    
+    // lists 페이지에서 exception_mode=recommend 추가
     const validPaths = [
       '/mgallery/board/lists/',
       '/mini/board/lists',
@@ -31,6 +47,8 @@ document.addEventListener('keydown', function(event) {
     
     if (isValidPath) {
       url.searchParams.set('exception_mode', 'recommend');
+      url.searchParams.delete('no');
+      url.searchParams.delete('page');
       window.location.href = url.toString();
     }
   } else if (event.key === 's') {
@@ -69,8 +87,8 @@ document.addEventListener('keydown', function(event) {
       }
     }
     
-    // all.dcinside.com/mini/board/view/ URL일 때 특별한 처리
-    if (url.hostname === 'all.dcinside.com' && url.pathname.includes('/mini/board/view/')) {
+    // gall.dcinside.com/mini/board/view/ URL일 때 특별한 처리
+    if (url.hostname === 'gall.dcinside.com' && url.pathname.includes('/mini/board/view/')) {
       const idParam = url.searchParams.get('id');
       if (idParam) {
         window.location.href = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}`;
