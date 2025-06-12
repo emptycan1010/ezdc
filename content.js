@@ -136,7 +136,9 @@ document.addEventListener('keydown', function(event) {
         window.location.href = `https://gall.dcinside.com/board/write/?id=${idParam}`;
         return;
       }
-    }
+    }  } else if (event.key === 'q') {
+    // Q키: 페이지 상단으로 스크롤
+    window.scrollTo(0, 0);
   } else if (event.key === 'f') {
     // F키: 특정 조건에서 id를 제외한 모든 URL 파라미터 삭제 또는 특별한 이동
     const exceptionMode = url.searchParams.get('exception_mode');
