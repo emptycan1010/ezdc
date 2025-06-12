@@ -109,7 +109,35 @@ document.addEventListener('keydown', function(event) {
         }
         window.location.href = url.toString();
       }
-    }} else if (event.key === 'f') {
+    }  } else if (event.key === 'w') {
+    // W키: lists 또는 view 페이지에서 write 페이지로 이동하면서 id를 제외한 모든 파라미터 삭제
+    const idParam = url.searchParams.get('id');
+    
+    if (url.hostname === 'gall.dcinside.com' && idParam) {
+      // view 페이지에서 write 페이지로 이동
+      if (url.pathname.includes('/mini/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/mini/board/write/?id=${idParam}`;
+        return;
+      } else if (url.pathname.includes('/mgallery/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/mgallery/board/write/?id=${idParam}`;
+        return;
+      } else if (url.pathname.includes('/board/view/')) {
+        window.location.href = `https://gall.dcinside.com/board/write/?id=${idParam}`;
+        return;
+      }
+      // lists 페이지에서 write 페이지로 이동
+      else if (url.pathname.includes('/mini/board/lists')) {
+        window.location.href = `https://gall.dcinside.com/mini/board/write/?id=${idParam}`;
+        return;
+      } else if (url.pathname.includes('/mgallery/board/lists')) {
+        window.location.href = `https://gall.dcinside.com/mgallery/board/write/?id=${idParam}`;
+        return;
+      } else if (url.pathname.includes('/board/lists')) {
+        window.location.href = `https://gall.dcinside.com/board/write/?id=${idParam}`;
+        return;
+      }
+    }
+  } else if (event.key === 'f') {
     // F키: 특정 조건에서 id를 제외한 모든 URL 파라미터 삭제 또는 특별한 이동
     const exceptionMode = url.searchParams.get('exception_mode');
     const currentPage = parseInt(url.searchParams.get('page')) || 1;
