@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "갤질도우미",
+  "version": "1.0",
+  "description": "갤질도우미",
+  "permissions": ["activeTab"],
+  "host_permissions": ["https://gall.dcinside.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://gall.dcinside.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
