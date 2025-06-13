@@ -18,6 +18,8 @@ document.addEventListener('keydown', function(event) {
   const prefix = getBoardPrefix(url.pathname);
 
   if (event.key === 'c') {
+    // Ctrl, Alt, Meta(윈도우/커맨드) 키와 함께 눌렀을 때는 무시
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
     event.preventDefault();
     const memoElement = document.querySelector('#focus_cmt > div.cmt_write_box.clear > div.cmt_txt_cont > div.cmt_write textarea');
     if (memoElement) memoElement.focus();
