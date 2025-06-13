@@ -1,105 +1,64 @@
+function getBoardPrefix(path) {
+  if (path.includes('/mini/board/')) return '/mini/board';
+  if (path.includes('/mgallery/board/')) return '/mgallery/board';
+  return '/board';
+}
+
+function buildBoardUrl(prefix, page, params = {}) {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') search.set(k, v);
+  });
+  return `https://gall.dcinside.com${prefix}/${page}/?${search.toString()}`;
+}
+
 document.addEventListener('keydown', function(event) {
-  // 입력 필드에서 키 입력 시 무시
-  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-    return;
-  }
-  const currentUrl = window.location.href;
-  const url = new URL(currentUrl);
-  
+  if (['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+  const url = new URL(window.location.href);
+  const prefix = getBoardPrefix(url.pathname);
+
   if (event.key === 'c') {
-    event.preventDefault(); // 'c' 문자 입력 방지
+    event.preventDefault();
     const memoElement = document.querySelector('#focus_cmt > div.cmt_write_box.clear > div.cmt_txt_cont > div.cmt_write textarea');
-    if (memoElement) {
-      memoElement.focus();
-    }  } else if (event.key === 'd') {
+    if (memoElement) memoElement.focus();
+  } else if (event.key === 'd') {
     const refreshButton = document.querySelector('button.btn_cmt_refresh');
-    if (refreshButton) {
-      refreshButton.click();
-    }
+    if (refreshButton) refreshButton.click();
   } else if (event.key === 'r') {
-    // R키: 새로고침
-    window.location.reload();  } else if (event.key === 'g') {
-    // G키: view 페이지에서 해당하는 lists 페이지로 이동하거나 lists 페이지에서 exception_mode=recommend 추가
+    window.location.reload();
+  } else if (event.key === 'g') {
     const idParam = url.searchParams.get('id');
-    
-    // view 페이지에서 해당하는 lists 페이지로 이동
-    if (url.hostname === 'gall.dcinside.com' && idParam) {
-      if (url.pathname.includes('/mini/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}&exception_mode=recommend`;
-        return;
-      } else if (url.pathname.includes('/mgallery/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}&exception_mode=recommend`;
-        return;
-      } else if (url.pathname.includes('/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/board/lists/?id=${idParam}&exception_mode=recommend`;
-        return;
-      }
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+      window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam, exception_mode: 'recommend' });
+      return;
     }
-    
-    // lists 페이지에서 exception_mode=recommend 추가
-    const validPaths = [
-      '/mgallery/board/lists/',
-      '/mini/board/lists',
-      '/board/lists'
-    ];
-    
-    const isValidPath = validPaths.some(path => url.pathname.includes(path));
-    
-    if (isValidPath) {
+    const validPaths = ['/mgallery/board/lists/', '/mini/board/lists', '/board/lists'];
+    if (validPaths.some(path => url.pathname.includes(path))) {
       url.searchParams.set('exception_mode', 'recommend');
       url.searchParams.delete('no');
       url.searchParams.delete('page');
       window.location.href = url.toString();
-    }  } else if (event.key === 's') {
-    // S키: view 페이지에서는 lists로 이동하면서 exception_mode 유지하고 page=2, lists 페이지에서는 page 값 1씩 증가
+    }
+  } else if (event.key === 's') {
     const idParam = url.searchParams.get('id');
     const exceptionMode = url.searchParams.get('exception_mode');
-    
     if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
-      // view 페이지에서 lists 페이지로 이동하면서 page=2 설정
-      let baseUrl = '';
-      if (url.pathname.includes('/mini/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}&page=2`;
-      } else if (url.pathname.includes('/mgallery/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}&page=2`;
-      } else if (url.pathname.includes('/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/board/lists/?id=${idParam}&page=2`;
-      }
-      
-      if (baseUrl && exceptionMode) {
-        window.location.href = `${baseUrl}&exception_mode=${exceptionMode}`;
-      } else if (baseUrl) {
-        window.location.href = baseUrl;
-      }
+      const params = { id: idParam, page: 2 };
+      if (exceptionMode) params.exception_mode = exceptionMode;
+      window.location.href = buildBoardUrl(prefix, 'lists', params);
     } else {
-      // lists 페이지에서는 기존 로직
       const currentPage = parseInt(url.searchParams.get('page')) || 1;
       url.searchParams.set('page', currentPage + 1);
       window.location.href = url.toString();
     }
   } else if (event.key === 'a') {
-    // A키: view 페이지에서는 lists로 이동하면서 exception_mode 유지, lists 페이지에서는 page 값 1씩 감소
     const idParam = url.searchParams.get('id');
     const exceptionMode = url.searchParams.get('exception_mode');
-    
     if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
-      // view 페이지에서 lists 페이지로 이동
-      let baseUrl = '';
-      if (url.pathname.includes('/mini/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}`;
-      } else if (url.pathname.includes('/mgallery/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}`;
-      } else if (url.pathname.includes('/board/view/')) {
-        baseUrl = `https://gall.dcinside.com/board/lists/?id=${idParam}`;
-      }
-      
-      if (baseUrl && exceptionMode) {
-        window.location.href = `${baseUrl}&exception_mode=${exceptionMode}`;
-      } else if (baseUrl) {
-        window.location.href = baseUrl;
-      }
+      const params = { id: idParam };
+      if (exceptionMode) params.exception_mode = exceptionMode;
+      window.location.href = buildBoardUrl(prefix, 'lists', params);
     } else {
-      // lists 페이지에서는 기존 로직
       const currentPage = parseInt(url.searchParams.get('page')) || 1;
       if (currentPage > 1) {
         if (currentPage === 2) {
@@ -109,79 +68,30 @@ document.addEventListener('keydown', function(event) {
         }
         window.location.href = url.toString();
       }
-    }  } else if (event.key === 'w') {
-    // W키: lists 또는 view 페이지에서 write 페이지로 이동하면서 id를 제외한 모든 파라미터 삭제
+    }
+  } else if (event.key === 'w') {
     const idParam = url.searchParams.get('id');
-    
-    if (url.hostname === 'gall.dcinside.com' && idParam) {
-      // view 페이지에서 write 페이지로 이동
-      if (url.pathname.includes('/mini/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/mini/board/write/?id=${idParam}`;
-        return;
-      } else if (url.pathname.includes('/mgallery/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/mgallery/board/write/?id=${idParam}`;
-        return;
-      } else if (url.pathname.includes('/board/view/')) {
-        window.location.href = `https://gall.dcinside.com/board/write/?id=${idParam}`;
-        return;
-      }
-      // lists 페이지에서 write 페이지로 이동
-      else if (url.pathname.includes('/mini/board/lists')) {
-        window.location.href = `https://gall.dcinside.com/mini/board/write/?id=${idParam}`;
-        return;
-      } else if (url.pathname.includes('/mgallery/board/lists')) {
-        window.location.href = `https://gall.dcinside.com/mgallery/board/write/?id=${idParam}`;
-        return;
-      } else if (url.pathname.includes('/board/lists')) {
-        window.location.href = `https://gall.dcinside.com/board/write/?id=${idParam}`;
-        return;
-      }
-    }  } else if (event.key === 'q') {
-    // Q키: 페이지 상단으로 스크롤
+    if (url.hostname === 'gall.dcinside.com' && idParam && (url.pathname.includes('/view/') || url.pathname.includes('/lists'))) {
+      window.location.href = buildBoardUrl(prefix, 'write', { id: idParam });
+    }
+  } else if (event.key === 'q') {
     window.scrollTo(0, 0);
   } else if (event.key === 'f') {
-    // F키: 특정 조건에서 id를 제외한 모든 URL 파라미터 삭제 또는 특별한 이동
     const exceptionMode = url.searchParams.get('exception_mode');
     const currentPage = parseInt(url.searchParams.get('page')) || 1;
     const noParam = url.searchParams.get('no');
-      // gall.dcinside.com에서 view 페이지일 때 해당하는 lists 페이지로 이동
-    if (url.hostname === 'gall.dcinside.com') {
-      const idParam = url.searchParams.get('id');
-      if (idParam) {
-        if (url.pathname.includes('/mini/board/view/')) {
-          window.location.href = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}`;
-          return;
-        } else if (url.pathname.includes('/mgallery/board/view/')) {
-          window.location.href = `https://gall.dcinside.com/mgallery/board/lists/?id=${idParam}`;
-          return;
-        } else if (url.pathname.includes('/board/view/')) {
-          window.location.href = `https://gall.dcinside.com/board/lists/?id=${idParam}`;
-          return;
-        }
-      }
-    }
-    
-    // gall.dcinside.com/mini/board/view/ URL일 때 특별한 처리
-    if (url.hostname === 'gall.dcinside.com' && url.pathname.includes('/mini/board/view/')) {
-      const idParam = url.searchParams.get('id');
-      if (idParam) {
-        window.location.href = `https://gall.dcinside.com/mini/board/lists/?id=${idParam}`;
-      }
+    const idParam = url.searchParams.get('id');
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/write/')) {
+      window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam });
       return;
     }
-    
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+      window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam });
+      return;
+    }
     if ((exceptionMode === 'recommend' || exceptionMode === 'notice') || currentPage >= 2 || noParam) {
-      // id 파라미터만 보존
-      const idParam = url.searchParams.get('id');
-      
-      // 모든 파라미터 삭제
       url.search = '';
-      
-      // id 파라미터가 있었다면 다시 추가
-      if (idParam) {
-        url.searchParams.set('id', idParam);
-      }
-      
+      if (idParam) url.searchParams.set('id', idParam);
       window.location.href = url.toString();
     }
   }
