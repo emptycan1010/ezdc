@@ -30,7 +30,7 @@ document.addEventListener('keydown', function(event) {
     window.location.reload();
   } else if (event.key === 'g') {
     const idParam = url.searchParams.get('id');
-    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
       window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam, exception_mode: 'recommend' });
       return;
     }
@@ -44,7 +44,7 @@ document.addEventListener('keydown', function(event) {
   } else if (event.key === 's') {
     const idParam = url.searchParams.get('id');
     const exceptionMode = url.searchParams.get('exception_mode');
-    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
       const params = { id: idParam, page: 2 };
       if (exceptionMode) params.exception_mode = exceptionMode;
       window.location.href = buildBoardUrl(prefix, 'lists', params);
@@ -56,7 +56,7 @@ document.addEventListener('keydown', function(event) {
   } else if (event.key === 'a') {
     const idParam = url.searchParams.get('id');
     const exceptionMode = url.searchParams.get('exception_mode');
-    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
       const params = { id: idParam };
       if (exceptionMode) params.exception_mode = exceptionMode;
       window.location.href = buildBoardUrl(prefix, 'lists', params);
@@ -73,7 +73,7 @@ document.addEventListener('keydown', function(event) {
     }
   } else if (event.key === 'w') {
     const idParam = url.searchParams.get('id');
-    if (url.hostname === 'gall.dcinside.com' && idParam && (url.pathname.includes('/view/') || url.pathname.includes('/lists'))) {
+    if (url.hostname === 'gall.dcinside.com' && idParam && (url.pathname.includes('/view') || url.pathname.includes('/lists'))) {
       window.location.href = buildBoardUrl(prefix, 'write', { id: idParam });
     }
   } else if (event.key === 'q') {
@@ -83,7 +83,7 @@ document.addEventListener('keydown', function(event) {
     const currentPage = parseInt(url.searchParams.get('page')) || 1;
     const noParam = url.searchParams.get('no');
     const idParam = url.searchParams.get('id');
-    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view/')) {
+    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
       window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam });
       return;
     }
