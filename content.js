@@ -67,7 +67,7 @@ document.addEventListener('keydown', function(event) {
           url.searchParams.delete('page');
         } else {
           url.searchParams.set('page', currentPage - 1);
-        }
+        }//
         window.location.href = url.toString();
       }
     }
