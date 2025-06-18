@@ -13,7 +13,11 @@ function buildBoardUrl(prefix, page, params = {}) {
 }
 
 document.addEventListener('keydown', function(event) {
-  if (['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+  if (
+    ['INPUT', 'TEXTAREA'].includes(event.target.tagName) || 
+    (event.target.getAttribute('contenteditable') === 'true') ||
+    (event.target.closest('[contenteditable="true"]'))
+  ) return;
   const url = new URL(window.location.href);
   const prefix = getBoardPrefix(url.pathname);
 
