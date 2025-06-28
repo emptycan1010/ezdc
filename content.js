@@ -83,6 +83,9 @@ document.addEventListener('keydown', function(event) {
   } else if (event.key === 'q') {
     window.scrollTo(0, 0);
   } else if (event.key === 'f') {
+    // Ctrl, Alt, Meta(윈도우/커맨드) 키와 함께 눌렀을 때는 무시
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+
     const exceptionMode = url.searchParams.get('exception_mode');
     const currentPage = parseInt(url.searchParams.get('page')) || 1;
     const noParam = url.searchParams.get('no');
@@ -91,7 +94,7 @@ document.addEventListener('keydown', function(event) {
       window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam });
       return;
     }
-    if ((exceptionMode === 'recommend' || exceptionMode === 'notice') || currentPage >= 2 || noParam) {
+    if ((exceptionMode === 'recommend' || exceptionMode === 'notice') || currentPage >= 1 || noParam) {
       url.search = '';
       if (idParam) url.searchParams.set('id', idParam);
       window.location.href = url.toString();
