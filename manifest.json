@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "갤질도우미",
+  "name": "갤질 도우미E",
   "version": "1.10",
-  "description": "갤질도우미Alt",
+  "description": "갤질도우미",
   "permissions": [],
   "host_permissions": ["https://gall.dcinside.com/*"],
   "content_scripts": [
