@@ -34,18 +34,25 @@ document.addEventListener('keydown', function(event) {
     window.location.reload();
   } else if (event.key === 'g') {
     const idParam = url.searchParams.get('id');
+    // From a post view, go to the recommended posts list
     if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
       window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam, exception_mode: 'recommend' });
       return;
     }
-    const validPaths = ['/mgallery/board/lists/', '/mini/board/lists', '/board/lists'];
+
+    // From a list view (including search results), go to the recommended posts list
+    const validPaths = ['/mgallery/board/lists', '/mini/board/lists', '/board/lists'];
     if (validPaths.some(path => url.pathname.includes(path))) {
-      url.searchParams.set('exception_mode', 'recommend');
-      url.searchParams.delete('no');
-      url.searchParams.delete('page');
+      // Create new search parameters, keeping only 'id'
+      const newParams = new URLSearchParams();
+      if (idParam) newParams.set('id', idParam);
+      
+      // Set exception_mode and rebuild the URL
+      newParams.set('exception_mode', 'recommend');
+      url.search = newParams.toString();
       window.location.href = url.toString();
     }
-  } else if (event.key === 's') {
+} else if (event.key === 's') {
     const idParam = url.searchParams.get('id');
     const exceptionMode = url.searchParams.get('exception_mode');
     if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
@@ -89,18 +96,23 @@ document.addEventListener('keydown', function(event) {
     // Ctrl, Alt, Meta(윈도우/커맨드) 키와 함께 눌렀을 때는 무시
     if (event.ctrlKey || event.altKey || event.metaKey) return;
 
-    const exceptionMode = url.searchParams.get('exception_mode');
-    const currentPage = parseInt(url.searchParams.get('page')) || 1;
-    const noParam = url.searchParams.get('no');
     const idParam = url.searchParams.get('id');
-    if (url.hostname === 'gall.dcinside.com' && idParam && url.pathname.includes('/view')) {
+
+    // [수정됨] 글쓰기(write)나 글보기(view) 페이지에서 목록으로 이동
+    if (idParam && (url.pathname.includes('/write') || url.pathname.includes('/view'))) {
       window.location.href = buildBoardUrl(prefix, 'lists', { id: idParam });
       return;
     }
-    if ((exceptionMode === 'recommend' || exceptionMode === 'notice') || currentPage >= 1 || noParam) {
+    
+    // 필터링된 목록(개념글, 공지, 2페이지 이상)에서 기본 목록 1페이지로 이동
+    const exceptionMode = url.searchParams.get('exception_mode');
+    const currentPage = parseInt(url.searchParams.get('page')) || 1;
+    const noParam = url.searchParams.get('no');
+    
+    if ((exceptionMode === 'recommend' || exceptionMode === 'notice') || currentPage > 1 || noParam) {
       url.search = '';
       if (idParam) url.searchParams.set('id', idParam);
       window.location.href = url.toString();
     }
-  }
+}
 });
